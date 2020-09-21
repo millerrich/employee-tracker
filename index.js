@@ -64,13 +64,13 @@ const employeeQuestions = [
     }
 ]
 
-const removeQuestions = [
-    {
-        type: "number",
-        message: "Enter ID number of employee to remove:",
-        name: "remove"
-    }
-]
+// const removeQuestions = [
+//     {
+//         type: "number",
+//         message: "Enter ID number of employee to remove:",
+//         name: "remove"
+//     }
+// ]
 
 function viewEmployees() {
     connection.query("SELECT * FROM employee", function (err, result) {
@@ -103,21 +103,31 @@ function addEmployee(answers) {
     console.log(query.sql);
 }
 
-function removeEmployee(answers) {
+function removeEmployee() {
 
-    const empID = answers.remove;
-    
-    console.log("Removing employee...\n");
-    connection.query(
-    "DELETE FROM employee WHERE ?",
-    {
-      id: empID
-    },
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " was removed!\n");
+    connection.query("SELECT * FROM employee", function(err, res) {
+        if (err) throw err;
+        prompt([
+            {
+                type: "rawlist",
+                message: "Which employee would you like to remove?",
+                name: "remove",
+                choices: res.map(employees => employees.first_name)
+            }
+        ]).then(answer => {
+            console.log(answer.remove);
+            connection.query(
+                "DELETE FROM employee WHERE ?",
+                {
+                    first_name: answer.remove
+                },
+                function(err, res) {
+                    if (err) throw err;
+                    console.log(answer.remove + " removed from employees")
+                }
+            );
+        })
     });
-    connection.end();
 }
 
 function init() {
@@ -132,9 +142,7 @@ function init() {
             });
             break;
         case "remove employee":
-            prompt(removeQuestions). then(answers => {
-                return removeEmployee(answers);
-            });
+            removeEmployee();
             break;
         }
     });
