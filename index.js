@@ -66,12 +66,9 @@ const employeeQuestions = [
 
 const removeQuestions = [
     {
-        type: "list",
-        message: "Which employee would you like to remove?",
-        name: "remove",
-        choices: [
-            "employees object"
-        ]
+        type: "number",
+        message: "Enter ID number of employee to remove:",
+        name: "remove"
     }
 ]
 
@@ -99,12 +96,14 @@ function addEmployee(answers) {
 }
 
 function removeEmployee(answers) {
+
+    const empID = answers.remove;
     
     console.log("Removing employee...\n");
     connection.query(
     "DELETE FROM employee WHERE ?",
     {
-      id: 4
+      id: empID
     },
     function(err, res) {
       if (err) throw err;
@@ -126,9 +125,9 @@ function init() {
                 return addEmployee(answers);
             })
         } else if (answers.options === "remove employee") {
-            connection.query("SELECT * FROM employee", function (err, result) {
+            connection.query("SELECT * FROM employee", async function (err, result) {
                 if (err) throw err;
-                console.log(result);
+                await console.table(result);
             });
             
             // add function to create object of first name and id from employee table
