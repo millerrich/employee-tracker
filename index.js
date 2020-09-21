@@ -70,7 +70,7 @@ const removeQuestions = [
         message: "Which employee would you like to remove?",
         name: "remove",
         choices: [
-            //insert choices from employee table
+            "employees object"
         ]
     }
 ]
@@ -79,7 +79,7 @@ function addEmployee(answers) {
     
     const { firstName, lastName, role, manager } = answers;
 
-    console.log("Adding new employee...\n");
+    console.log("----------------------\n" + "Adding new employee...\n" + "----------------------\n");
     var query = connection.query(
       "INSERT INTO employee SET ?",
       {
@@ -90,19 +90,32 @@ function addEmployee(answers) {
       },
       function(err, res) {
         if (err) throw err;
-        console.log(res.affectedRows + " employee inserted!\n");
-        // Call updateProduct AFTER the INSERT completes
-        // updateProduct();
+        console.log("----------------------\n" + res.affectedRows + " employee inserted!\n");
+        connection.end();
       }
     );
 
     console.log(query.sql);
 }
 
+function removeEmployee(answers) {
+    
+    console.log("Removing employee...\n");
+    connection.query(
+    "DELETE FROM employee WHERE ?",
+    {
+      id: 4
+    },
+    function(err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " was removed!\n");
+    });
+    connection.end();
+}
+
 function init() {
     prompt(questions).then(answers => {
         if (answers.options === "view all employees") {
-            // this isn't right, figure out how to get table
             connection.query("SELECT * FROM employee", function (err, result) {
                 if (err) throw err;
                 console.table(result);
@@ -113,7 +126,16 @@ function init() {
                 return addEmployee(answers);
             })
         } else if (answers.options === "remove employee") {
-            prompt(removeQuestions);
+            connection.query("SELECT * FROM employee", function (err, result) {
+                if (err) throw err;
+                console.log(result);
+            });
+            
+            // add function to create object of first name and id from employee table
+            // push to var employees to have as choices in remove question
+            prompt(removeQuestions). then(answers => {
+                return removeEmployee(answers);
+            })
         }
 });
 };
