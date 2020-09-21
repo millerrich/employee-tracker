@@ -103,7 +103,11 @@ function init() {
     prompt(questions).then(answers => {
         if (answers.options === "view all employees") {
             // this isn't right, figure out how to get table
-            console.table(connection.query(employee_db.employee));
+            connection.query("SELECT * FROM employee", function (err, result) {
+                if (err) throw err;
+                console.table(result);
+                connection.end();
+              });
         } else if (answers.options === "add employee") {
             prompt(employeeQuestions).then(answers => {
                 return addEmployee(answers);
