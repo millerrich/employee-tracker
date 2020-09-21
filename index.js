@@ -72,6 +72,14 @@ const removeQuestions = [
     }
 ]
 
+function viewEmployees() {
+    connection.query("SELECT * FROM employee", function (err, result) {
+        if (err) throw err;
+        console.table(result);
+        connection.end();
+      });
+}
+
 function addEmployee(answers) {
     
     const { firstName, lastName, role, manager } = answers;
@@ -114,27 +122,20 @@ function removeEmployee(answers) {
 
 function init() {
     prompt(questions).then(answers => {
-        if (answers.options === "view all employees") {
-            connection.query("SELECT * FROM employee", function (err, result) {
-                if (err) throw err;
-                console.table(result);
-                connection.end();
-              });
-        } else if (answers.options === "add employee") {
+        switch (answers.options) {
+        case "view all employees":
+            viewEmployees();
+            break;
+        case "add employee":
             prompt(employeeQuestions).then(answers => {
                 return addEmployee(answers);
-            })
-        } else if (answers.options === "remove employee") {
-            connection.query("SELECT * FROM employee", async function (err, result) {
-                if (err) throw err;
-                await console.table(result);
             });
-            
-            // add function to create object of first name and id from employee table
-            // push to var employees to have as choices in remove question
+            break;
+        case "remove employee":
             prompt(removeQuestions). then(answers => {
                 return removeEmployee(answers);
-            })
+            });
+            break;
         }
-});
+    });
 };
