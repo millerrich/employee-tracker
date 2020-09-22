@@ -159,18 +159,22 @@ function removeEmployee() {
                 type: "rawlist",
                 message: "Which employee would you like to remove?",
                 name: "remove",
-                choices: res.map(employees => employees.first_name)
+                choices: res.map(emp => ({
+                    name: emp.first_name + " " + emp.last_name,
+                    value: emp.id
+                }))
             }
         ]).then(answer => {
             console.log(answer.remove);
             connection.query(
                 "DELETE FROM employee WHERE ?",
                 {
-                    first_name: answer.remove
+                    id: answer.remove
                 },
                 function(err, res) {
                     if (err) throw err;
-                    console.log(answer.remove + " removed from employees")
+                    console.log(answer, " removed from employees")
+                    init();
                 }
             );
         })
