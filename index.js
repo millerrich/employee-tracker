@@ -90,6 +90,14 @@ const roleQuestions = [
     },
 ]
 
+const departmentQuestions = [
+    {
+        type: "input",
+        message: "Enter department title:",
+        name: "name"
+    }
+]
+
 function viewEmployees() {
     connection.query("SELECT * FROM employee", function (err, result) {
         if (err) throw err;
@@ -196,6 +204,52 @@ function removeRole() {
     });
 }
 
+function addDepartment(answers) {
+
+    const { name } = answers;
+
+    console.log("----------------------\n" + "Adding new department...\n" + "----------------------\n");
+    var query = connection.query(
+      "INSERT INTO department SET ?",
+      {
+        name: name
+      },
+      function(err, res) {
+        if (err) throw err;
+        console.log("----------------------\n" + res.affectedRows + " department inserted!\n");
+        // connection.end();
+        init();
+      }
+    );
+}
+
+function removeDepartment() {
+    connection.query("SELECT * FROM department", function(err, res) {
+        if (err) throw err;
+        prompt([
+            {
+                type: "rawlist",
+                message: "Which department would you like to remove?",
+                name: "remove",
+                choices: res.map(dep => dep.name)
+            }
+        ]).then(answer => {
+            // console.log(answer.remove);
+            connection.query(
+                "DELETE FROM department WHERE ?",
+                {
+                    name: answer.remove
+                },
+                function(err, res) {
+                    if (err) throw err;
+                    console.log(answer.remove + " removed from department")
+                }
+            );
+            init();
+        })
+    });
+}
+
 function init() {
     prompt(questions).then(answers => {
         switch (answers.options) {
@@ -217,6 +271,14 @@ function init() {
             break;
         case "remove a role":
             removeRole();
+            break;
+        case "add a department":
+            prompt(departmentQuestions).then(answers => {
+                return addDepartment(answers);
+            });
+            break;
+        case "remove a department":
+            removeDepartment();
             break;
         }
     });
