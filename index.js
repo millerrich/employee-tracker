@@ -26,7 +26,8 @@ const questions = [
             "add a role",
             "remove a role",
             "add a department",
-            "remove a department"
+            "remove a department",
+            "EXIT"
         ]
     }
 ]
@@ -279,6 +280,9 @@ function init() {
             break;
         case "remove a department":
             removeDepartment();
+            break;
+        case "EXIT":
+            connection.end();
             break;
         }
     });
