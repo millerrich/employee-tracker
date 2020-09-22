@@ -21,6 +21,8 @@ const questions = [
         name: "options",
         choices: [
             "view all employees",
+            "view all roles",
+            "view all departments",
             "add employee",
             "remove employee",
             "add a role",
@@ -101,6 +103,24 @@ const departmentQuestions = [
 
 function viewEmployees() {
     connection.query("SELECT * FROM employee", function (err, result) {
+        if (err) throw err;
+        console.table(result);
+        // connection.end();
+        init();
+      });
+}
+
+function viewRoles() {
+    connection.query("SELECT * FROM role", function (err, result) {
+        if (err) throw err;
+        console.table(result);
+        // connection.end();
+        init();
+      });
+}
+
+function viewDepts() {
+    connection.query("SELECT * FROM department", function (err, result) {
         if (err) throw err;
         console.table(result);
         // connection.end();
@@ -256,6 +276,12 @@ function init() {
         switch (answers.options) {
         case "view all employees":
             viewEmployees();
+            break;
+        case "view all roles":
+            viewRoles();
+            break;
+        case "view all departments":
+            viewDepts();
             break;
         case "add employee":
             prompt(employeeQuestions).then(answers => {
