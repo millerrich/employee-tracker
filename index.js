@@ -22,9 +22,11 @@ const questions = [
         choices: [
             "view all employees",
             "add employee",
-            "remove employee"
-            // "view employees by department",
-            // "view employees by role"
+            "remove employee",
+            "add a role",
+            "remove a role",
+            "add a department",
+            "remove a department"
         ]
     }
 ]
@@ -64,19 +66,36 @@ const employeeQuestions = [
     }
 ]
 
-// const removeQuestions = [
-//     {
-//         type: "number",
-//         message: "Enter ID number of employee to remove:",
-//         name: "remove"
-//     }
-// ]
+const roleQuestions = [
+    {
+        type: "input",
+        message: "Please enter title of role:",
+        name: "title"
+    },
+    {
+        type: "number",
+        message: "Salary:",
+        name: "salary",
+        // validate isNaN
+    },
+    {
+        type: "list",
+        message: "select department ID:",
+        name: "department_id",
+        choices: [
+            1,
+            2,
+            3
+        ]
+    },
+]
 
 function viewEmployees() {
     connection.query("SELECT * FROM employee", function (err, result) {
         if (err) throw err;
         console.table(result);
-        connection.end();
+        // connection.end();
+        init();
       });
 }
 
@@ -96,11 +115,10 @@ function addEmployee(answers) {
       function(err, res) {
         if (err) throw err;
         console.log("----------------------\n" + res.affectedRows + " employee inserted!\n");
-        connection.end();
+        // connection.end();
+        init();
       }
     );
-
-    console.log(query.sql);
 }
 
 function removeEmployee() {
@@ -130,6 +148,31 @@ function removeEmployee() {
     });
 }
 
+function addRole(answers) {
+
+    const { title, salary, department_id } = answers;
+
+    console.log("----------------------\n" + "Adding new role...\n" + "----------------------\n");
+    var query = connection.query(
+      "INSERT INTO role SET ?",
+      {
+        title: title,
+        salary: salary,
+        department_id: department_id
+      },
+      function(err, res) {
+        if (err) throw err;
+        console.log("----------------------\n" + res.affectedRows + " role inserted!\n");
+        // connection.end();
+        init();
+      }
+    );
+}
+
+// function removeRole() {
+
+// }
+
 function init() {
     prompt(questions).then(answers => {
         switch (answers.options) {
@@ -143,6 +186,11 @@ function init() {
             break;
         case "remove employee":
             removeEmployee();
+            break;
+        case "add a role":
+            prompt(roleQuestions).then(answers => {
+                return addRole(answers);
+            });
             break;
         }
     });
