@@ -169,9 +169,32 @@ function addRole(answers) {
     );
 }
 
-// function removeRole() {
-
-// }
+function removeRole() {
+    connection.query("SELECT * FROM role", function(err, res) {
+        if (err) throw err;
+        prompt([
+            {
+                type: "rawlist",
+                message: "Which role would you like to remove?",
+                name: "remove",
+                choices: res.map(roles => roles.title)
+            }
+        ]).then(answer => {
+            // console.log(answer.remove);
+            connection.query(
+                "DELETE FROM role WHERE ?",
+                {
+                    title: answer.remove
+                },
+                function(err, res) {
+                    if (err) throw err;
+                    console.log(answer.remove + " removed from roles")
+                }
+            );
+            init();
+        })
+    });
+}
 
 function init() {
     prompt(questions).then(answers => {
@@ -191,6 +214,9 @@ function init() {
             prompt(roleQuestions).then(answers => {
                 return addRole(answers);
             });
+            break;
+        case "remove a role":
+            removeRole();
             break;
         }
     });
