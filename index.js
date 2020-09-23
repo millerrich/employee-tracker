@@ -222,9 +222,9 @@ function removeRole() {
                 function(err, res) {
                     if (err) throw err;
                     console.log(answer.remove + " removed from roles")
+                    init();
                 }
             );
-            init();
         })
     });
 }
@@ -268,9 +268,9 @@ function removeDepartment() {
                 function(err, res) {
                     if (err) throw err;
                     console.log(answer.remove + " removed from department")
+                    init();
                 }
             );
-            init();
         })
     });
 }
