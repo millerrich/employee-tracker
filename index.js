@@ -25,6 +25,7 @@ const questions = [
             "view all departments",
             "add employee",
             "remove employee",
+            "update employee role",
             "add a role",
             "remove a role",
             "add a department",
@@ -229,6 +230,52 @@ function removeRole() {
     });
 }
 
+function updateRole() {
+    
+    connection.query("SELECT * FROM employee", function(err, res) {
+        if (err) throw err;
+        prompt([
+            {
+                type: "rawlist",
+                message: "Which employee would you like to update the role for?",
+                name: "updateSelect",
+                choices: res.map(emp => ({
+                    name: emp.first_name + " " + emp.last_name + " Current Role ID: " + emp.role_id,
+                    value: emp.id
+                }))
+            },
+            {
+                type: "list",
+                message: "Select employee's new role ID:",
+                name: "roleUpdate",
+                choices: [
+                    1,
+                    2,
+                    3
+                ]
+            }
+        ]).then(answers => {
+            console.log(answers);
+            connection.query(
+                "UPDATE employee SET ? WHERE ?",
+                [
+                    {
+                        role_id: answers.roleUpdate
+                    },
+                    {
+                        id: answers.updateSelect
+                    }
+                ],
+                function(err, res) {
+                    if (err) throw err;
+                    console.log("role updated")
+                    init();
+                }
+            )
+        });
+    });
+}
+
 function addDepartment(answers) {
 
     const { name } = answers;
@@ -294,6 +341,9 @@ function init() {
             break;
         case "remove employee":
             removeEmployee();
+            break;
+        case "update employee role":
+            updateRole();
             break;
         case "add a role":
             prompt(roleQuestions).then(answers => {
