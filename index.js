@@ -51,10 +51,11 @@ const employeeQuestions = [
         message: "Employee's role:",
         name: "role",
         choices: [
-            // insert list of roles
             1,
             2,
-            3
+            3,
+            4,
+            5
         ]
     },
     {
@@ -62,10 +63,11 @@ const employeeQuestions = [
         message: "Employee's manager:",
         name: "manager",
         choices: [
-            // insert choices from those with role of manager
             1,
             2,
-            3
+            3,
+            4,
+            5
         ]
     }
 ]
@@ -79,8 +81,7 @@ const roleQuestions = [
     {
         type: "number",
         message: "Salary:",
-        name: "salary",
-        // validate isNaN
+        name: "salary"
     },
     {
         type: "list",
@@ -89,7 +90,9 @@ const roleQuestions = [
         choices: [
             1,
             2,
-            3
+            3,
+            4,
+            5
         ]
     },
 ]
@@ -106,7 +109,6 @@ function viewEmployees() {
     connection.query("SELECT * FROM employee", function (err, result) {
         if (err) throw err;
         console.table(result);
-        // connection.end();
         init();
       });
 }
@@ -115,7 +117,6 @@ function viewRoles() {
     connection.query("SELECT * FROM role", function (err, result) {
         if (err) throw err;
         console.table(result);
-        // connection.end();
         init();
       });
 }
@@ -124,7 +125,6 @@ function viewDepts() {
     connection.query("SELECT * FROM department", function (err, result) {
         if (err) throw err;
         console.table(result);
-        // connection.end();
         init();
       });
 }
@@ -134,7 +134,7 @@ function addEmployee(answers) {
     const { firstName, lastName, role, manager } = answers;
 
     console.log("----------------------\n" + "Adding new employee...\n" + "----------------------\n");
-    var query = connection.query(
+    connection.query(
       "INSERT INTO employee SET ?",
       {
         first_name: firstName,
@@ -145,7 +145,6 @@ function addEmployee(answers) {
       function(err, res) {
         if (err) throw err;
         console.log("----------------------\n" + res.affectedRows + " employee inserted!\n");
-        // connection.end();
         init();
       }
     );
@@ -166,7 +165,6 @@ function removeEmployee() {
                 }))
             }
         ]).then(answer => {
-            console.log(answer.remove);
             connection.query(
                 "DELETE FROM employee WHERE ?",
                 {
@@ -174,7 +172,7 @@ function removeEmployee() {
                 },
                 function(err, res) {
                     if (err) throw err;
-                    console.log(answer, " removed from employees")
+                    console.log("----------------------\nEmployee Removed\n----------------------\n")
                     init();
                 }
             );
@@ -187,7 +185,7 @@ function addRole(answers) {
     const { title, salary, department_id } = answers;
 
     console.log("----------------------\n" + "Adding new role...\n" + "----------------------\n");
-    var query = connection.query(
+    connection.query(
       "INSERT INTO role SET ?",
       {
         title: title,
@@ -197,7 +195,6 @@ function addRole(answers) {
       function(err, res) {
         if (err) throw err;
         console.log("----------------------\n" + res.affectedRows + " role inserted!\n");
-        // connection.end();
         init();
       }
     );
@@ -214,7 +211,6 @@ function removeRole() {
                 choices: res.map(roles => roles.title)
             }
         ]).then(answer => {
-            // console.log(answer.remove);
             connection.query(
                 "DELETE FROM role WHERE ?",
                 {
@@ -251,11 +247,12 @@ function updateRole() {
                 choices: [
                     1,
                     2,
-                    3
+                    3,
+                    4,
+                    5
                 ]
             }
         ]).then(answers => {
-            console.log(answers);
             connection.query(
                 "UPDATE employee SET ? WHERE ?",
                 [
@@ -281,7 +278,7 @@ function addDepartment(answers) {
     const { name } = answers;
 
     console.log("----------------------\n" + "Adding new department...\n" + "----------------------\n");
-    var query = connection.query(
+    connection.query(
       "INSERT INTO department SET ?",
       {
         name: name
@@ -289,7 +286,6 @@ function addDepartment(answers) {
       function(err, res) {
         if (err) throw err;
         console.log("----------------------\n" + res.affectedRows + " department inserted!\n");
-        // connection.end();
         init();
       }
     );
@@ -306,7 +302,6 @@ function removeDepartment() {
                 choices: res.map(dep => dep.name)
             }
         ]).then(answer => {
-            // console.log(answer.remove);
             connection.query(
                 "DELETE FROM department WHERE ?",
                 {
